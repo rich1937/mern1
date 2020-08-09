@@ -14,6 +14,8 @@ app.use(cors())
 
 app.use('/api', require('./routes/index'))
 
+app.use('/cakes', require('./routes/cakes'))
+
 app.listen(port)
 
 
