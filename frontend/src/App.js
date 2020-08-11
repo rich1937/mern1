@@ -1,41 +1,105 @@
 import React, { Component } from 'react';
-
+import axios from 'axios'
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      users:[],
-      id=0,
-      name:'',
-      email:'',
-      password:''
+    this.state = {
+      users: [],
+      id: 0,
+      name: '',
+      email: '',
+      password: ''
     }
+  }
+  componentDidMount() {
+    axios.get('http://localhost/api')
+      .then((res) => {
+        this.setState({
+          users: res.data,
+          id: 0,
+          name: '',
+          email: '',
+          password: ''
+        })
+        console.log(res.data)
+      })
+  }
+  namechange = event => {
+    this.setState({
+      name: event.target.value
+    })
+  }
+  emailchange = event => {
+    this.setState({
+      email: event.target.value
+    })
+  }
+  passwordchange = event => {
+    this.setState({
+      password: event.target.value
+    })
+  }
+  submit(event, id) {
+    event.preventDefault()
+    if (id === 0) {
+      axios.post('http://localhost/api', { name: this.state.name, email: this.state.email, password: this.state.password })
+        .then(() => {
+          this.componentDidMount()
+        })
+    } else {
+      axios.put('http://localhost/api/' + id, { name: this.state.name, email: this.state.email, password: this.state.password })
+        .then(() => {
+          this.componentDidMount()
+        })
+    }
+  }
+  delete(id) {
+    axios.delete('http://localhost/api/' + id)
+      .then(() => {
+        this.componentDidMount()
+      })
+  }
+  edit(id) {
+    axios.get('http://localhost/api/' + id)
+      .then((res) => {
+        console.log(res)
+        const savedId = res.data.data._id;
+        const savedName = res.data.data.name;
+        const savedEmail = res.data.data.email;
+        const savedPassword = res.data.data.password;
+        this.setState({
+          id: savedId,
+          name: savedName,
+          email: savedEmail,
+          password: savedPassword
+        });
+      }
+      )
   }
   render() {
     return (
       <div className="row">
         <div className="col s6">
-          <form>
-            <div class="input-field col s12">
-              <i class="material-icons prefix">person</i>
-              <input type="text" id="autocomplete-input" class="autocomplete" />
-              <label for="autocomplete-input">Name</label>
+          <form onSubmit={(e) => this.submit(e, this.state.id)}>
+            <div className="input-field col s12">
+              <i className="material-icons prefix">person</i>
+              <input value={this.state.name} onChange={(e) => this.namechange(e)} type="text" id="autocomplete-input" className="autocomplete" />
+              <label htmlFor="autocomplete-input">Name</label>
             </div>
-            <div class="input-field col s12">
-              <i class="material-icons prefix">mail</i>
-              <input type="email" id="autocomplete-input" class="autocomplete" />
-              <label for="autocomplete-input">Email</label>
+            <div className="input-field col s12">
+              <i className="material-icons prefix">mail</i>
+              <input value={this.state.email} onChange={(e) => this.emailchange(e)} type="email" id="autocomplete-input" className="autocomplete" />
+              <label htmlFor="autocomplete-input">Email</label>
             </div>
-            <div class="input-field col s12">
-              <i class="material-icons prefix">vpn_key</i>
-              <input type="password" id="autocomplete-input" class="autocomplete" />
-              <label for="autocomplete-input">Password</label>
+            <div className="input-field col s12">
+              <i className="material-icons prefix">vpn_key</i>
+              <input value={this.state.password} onChange={(e) => this.passwordchange(e)} type="password" id="autocomplete-input" className="autocomplete" />
+              <label htmlFor="autocomplete-input">Password</label>
             </div>
-            <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
-              <i class="material-icons right">send</i>
+            <button className="btn waves-effect waves-light right" type="submit" name="action">Submit
+              <i className="material-icons right">send</i>
             </button>
           </form>
-
         </div>
         <div className="col s6">
           <table>
@@ -48,23 +112,24 @@ class App extends Component {
                 <th>Delete</th>
               </tr>
             </thead>
-
             <tbody>
-              <tr>
-                <td>Alvin</td>
-                <td>Eclair</td>
-                <td>$0.87</td>
-                <td>
-                  <button class="btn waves-effect waves-light" type="submit" name="action">
-                     <i class="material-icons">edit</i>
-                  </button>
-                </td>
-                <td>
-                  <button class="btn waves-effect waves-light" type="submit" name="action">
-                    <i class="material-icons">delete</i>
-                  </button>
-                </td>
-              </tr>
+              {this.state.users.map(user =>
+                <tr key={user._id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.password}</td>
+                  <td>
+                    <button onClick={(e) => this.edit(user._id)} className="btn waves-effect waves-light" type="submit" name="action">
+                      <i className="material-icons">edit</i>
+                    </button>
+                  </td>
+                  <td>
+                    <button onClick={(e) => this.delete(user._id)} className="btn waves-effect waves-light" type="submit" name="action">
+                      <i className="material-icons">delete</i>
+                    </button>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

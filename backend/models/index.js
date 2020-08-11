@@ -7,12 +7,12 @@ newSchema = new Schema({
     password: String
 })
 
-cakeSchema = new Schema({
+/* cakeSchema = new Schema({
     name: String,
     tiers: String,
     icing: String,
    
 })
-
+ */
 module.exports = mongoose.model('User', newSchema)
-module.exports = mongoose.model('Cake', cakeSchema)
+//module.exports = mongoose.model('Cake', cakeSchema)

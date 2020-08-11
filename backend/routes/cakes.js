@@ -1,4 +1,4 @@
-const express = require('express')
+/* const express = require('express')
 const router = express.Router()
 const Cake = require('../models/index');
 
@@ -34,4 +34,4 @@ router.put('/:id',async (req,res)=>{
    await Cake.findByIdAndUpdate(req.params.id,req.body)
    res.json({'message':'updated'})
 })
-module.exports = router
+module.exports = router */
